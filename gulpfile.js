@@ -1,7 +1,8 @@
 
 const gulp = require('gulp');
 let { series, parallel, watch } = gulp;
-const uglify = require('gulp-uglify');
+// const uglify = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default; // for es6 syntax
 const cleanCss = require('gulp-clean-css');
 const rename = require('gulp-rename');
 const imageMin = require('gulp-imagemin');
