@@ -6,13 +6,6 @@ const cleanCss = require('gulp-clean-css');
 const rename = require('gulp-rename');
 const imageMin = require('gulp-imagemin');
 const concat = require('gulp-concat');
-// import gulp from 'gulp';
-// import { series, parallel, watch } from 'gulp';
-// import uglify from 'gulp-uglify';
-// import cleanCss from 'gulp-clean-css';
-// import rename from 'gulp-rename';
-// import imageMin from 'gulp-imagemin';
-// import concat from 'gulp-concat';
 
 const path = {
     css: {
