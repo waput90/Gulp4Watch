@@ -1,12 +1,18 @@
-#improved code base on ES6
 
-import gulp from 'gulp';
-import { series, parallel, watch } from 'gulp';
-import uglify from 'gulp-uglify';
-import cleanCss from 'gulp-clean-css';
-import rename from 'gulp-rename';
-import imageMin from 'gulp-imagemin';
-import concat from 'gulp-concat';
+const gulp = require('gulp');
+let { series, parallel, watch } = gulp;
+const uglify = require('gulp-uglify');
+const cleanCss = require('gulp-clean-css');
+const rename = require('gulp-rename');
+const imageMin = require('gulp-imagemin');
+const concat = require('gulp-concat');
+// import gulp from 'gulp';
+// import { series, parallel, watch } from 'gulp';
+// import uglify from 'gulp-uglify';
+// import cleanCss from 'gulp-clean-css';
+// import rename from 'gulp-rename';
+// import imageMin from 'gulp-imagemin';
+// import concat from 'gulp-concat';
 
 const path = {
     css: {
@@ -28,21 +34,21 @@ const path = {
         sysadminDest: './wwwroot/assets/js/sysadmin',
         sysadminMinDest: './wwwroot/assets/js/sysadmin/*.min.js',
         components: {
-            adminSrc: './wwwroot/assets/js/admin/*.js',
+            adminSrc: './wwwroot/assets/js/admin/*.c.js',
             adminDest: './wwwroot/assets/js/admin',
-            adminMinDest: './wwwroot/assets/js/admin/*.min.js',
+            adminMinDest: './wwwroot/assets/js/admin/*.c.min.js',
 
-            loginSrc: './wwwroot/assets/js/login/*.js',
+            loginSrc: './wwwroot/assets/js/login/*.c.js',
             loginDest: './wwwroot/assets/js/login',
-            loginMinDest: './wwwroot/assets/js/login/*.min.js',
+            loginMinDest: './wwwroot/assets/js/login/*.c.min.js',
 
-            registerSrc: './wwwroot/assets/js/register/*.js',
+            registerSrc: './wwwroot/assets/js/register/*.c.js',
             registerDest: './wwwroot/assets/js/register',
-            registerMinDest: './wwwroot/assets/js/register/*.min.js',
+            registerMinDest: './wwwroot/assets/js/register/*.c.min.js',
 
-            studentSrc: './wwwroot/assets/js/student/*.js',
+            studentSrc: './wwwroot/assets/js/student/*.c.js',
             studentDest: './wwwroot/assets/js/student',
-            studentMinDest: './wwwroot/assets/js/student/*.min.js'
+            studentMinDest: './wwwroot/assets/js/student/*.c.min.js'
         },
     },
     img: {
@@ -153,17 +159,16 @@ const watchComponentStudentJs = () => watch(path.js.components.studentSrc, serie
 
 
 
-const build = series(scssStyles,
-    parallel(
-        minStyle,
-        mainScripts,
-        adminScripts,
-        studentScripts,
-        sysadminScripts,
-        componentAdminScript,
-        componentLoginScript,
-        componentRegisterScript,
-        componentStudentScript));
+const build = parallel(
+    minStyle,
+    mainScripts,
+    adminScripts,
+    studentScripts,
+    sysadminScripts,
+    componentAdminScript,
+    componentLoginScript,
+    componentRegisterScript,
+    componentStudentScript);
 
 const _watch = parallel(
     watchMainJs,
