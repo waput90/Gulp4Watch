@@ -1,14 +1,22 @@
 
 const gulp = require('gulp');
 let { series, parallel, watch } = gulp;
-// const uglify = require('gulp-uglify');
-const uglify = require('gulp-uglify-es').default; // for es6 syntax
+const uglify = require('gulp-uglify');
 const cleanCss = require('gulp-clean-css');
 const rename = require('gulp-rename');
 const imageMin = require('gulp-imagemin');
 const concat = require('gulp-concat');
+const babel = require('gulp-babel');
+const sass = require('gulp-sass');
+
+// added babel for backwards compatibility of es6 syntax..
 
 const path = {
+    scss: {
+        src: './wwwroot/assets/scss/*.scss',
+        dest: './wwwroot/css',
+        minDest: './wwwroot/css/*.min.css'
+    },
     css: {
         src: './wwwroot/css/*.css',
         dest: './wwwroot/css',
@@ -51,6 +59,11 @@ const path = {
     }
 }
 
+const scss = () => {
+    return gulp.src([path.scss.src, '!' + path.css.minDest])
+        .pipe(sass()).on('error', sass.logError)
+        .pipe(gulp.dest(path.scss.dest));
+}
 
 const minStyle = () => {
     return gulp.src([path.css.src, '!' + path.css.minDest])
@@ -62,7 +75,11 @@ const minStyle = () => {
 }
 
 const mainScripts = () => {
+
     return gulp.src([path.js.mainSrc, '!' + path.js.mainMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -72,6 +89,9 @@ const mainScripts = () => {
 
 const adminScripts = () => {
     return gulp.src([path.js.adminSrc, '!' + path.js.adminMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -81,6 +101,9 @@ const adminScripts = () => {
 
 const studentScripts = () => {
     return gulp.src([path.js.studentSrc, '!' + path.js.studentMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -90,6 +113,9 @@ const studentScripts = () => {
 
 const sysadminScripts = () => {
     return gulp.src([path.js.sysadminSrc, '!' + path.js.sysadminMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -99,6 +125,9 @@ const sysadminScripts = () => {
 
 const componentAdminScript = () => {
     return gulp.src([path.js.components.adminSrc, '!' + path.js.components.adminMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -109,6 +138,9 @@ const componentAdminScript = () => {
 
 const componentLoginScript = () => {
     return gulp.src([path.js.components.loginSrc, '!' + path.js.components.loginMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -119,6 +151,9 @@ const componentLoginScript = () => {
 
 const componentRegisterScript = () => {
     return gulp.src([path.js.components.registerSrc, '!' + path.js.components.registerMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -129,6 +164,9 @@ const componentRegisterScript = () => {
 
 const componentStudentScript = () => {
     return gulp.src([path.js.components.studentSrc, '!' + path.js.components.studentMinDest])
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
@@ -141,19 +179,27 @@ const imgOpt = () => {
         .pipe(imageMin())
         .pipe(gulp.dest(path.img.dest));
 }
+const test = () => {
 
-const watchMainJs = () => watch(path.js.mainSrc, series(mainScripts));
-const watchAdminJs = () => watch(path.js.adminSrc, series(adminScripts));
-const watchStudenJs = () => watch(path.js.studentSrc, series(studentScripts));
-const watchSysAdminJs = () => watch(path.js.sysadminSrc, series(sysadminScripts));
-const watchComponentAdminJs = () => watch(path.js.components.adminSrc, series(componentAdminScript));
-const watchComponentLoginJs = () => watch(path.js.components.loginSrc, series(componentLoginScript));
-const watchComponentRegisterJs = () => watch(path.js.components.registerSrc, series(componentRegisterScript));
-const watchComponentStudentJs = () => watch(path.js.components.studentSrc, series(componentStudentScript));
+}
+const mainWatch = () => {
+    watch(path.js.mainSrc, series(mainScripts));
+}
 
 
+const watchScss = () => watch([path.scss.src, `!${path.scss.minDest}`], series(scss));
+const watchCss = () => watch([path.css.src, `!${path.css.minDest}`], series(minStyle));
+const watchMainJs = () => watch([path.js.mainSrc, `!${path.js.mainMinDest}`], series(mainScripts));
+const watchAdminJs = () => watch([path.js.adminSrc, `!${path.js.adminMinDest}`], series(adminScripts));
+const watchStudenJs = () => watch([path.js.studentSrc, `!${path.js.studentMinDest}`], series(studentScripts));
+const watchSysAdminJs = () => watch([path.js.sysadminSrc, `!${path.js.sysadminMinDest}`], series(sysadminScripts));
+const watchComponentAdminJs = () => watch([path.js.components.adminSrc, `!${path.js.components.adminMinDest}`], series(componentAdminScript));
+const watchComponentLoginJs = () => watch([path.js.components.loginSrc, `!${path.js.components.loginMinDest}`], series(componentLoginScript));
+const watchComponentRegisterJs = () => watch([path.js.components.registerSrc, `!${path.js.components.registerMinDest}`], series(componentRegisterScript));
+const watchComponentStudentJs = () => watch([path.js.components.studentSrc, `!${path.js.components.studentMinDest}`], series(componentStudentScript));
 
 const build = parallel(
+    scss,
     minStyle,
     mainScripts,
     adminScripts,
@@ -165,6 +211,8 @@ const build = parallel(
     componentStudentScript);
 
 const _watch = parallel(
+    watchScss,
+    watchCss,
     watchMainJs,
     watchAdminJs,
     watchStudenJs,
