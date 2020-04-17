@@ -1,173 +1,181 @@
-var gulp = require("gulp");
-var sass = require("gulp-sass");
-var uglify = require("gulp-uglify");
-var cleanCss = require("gulp-clean-css");
-var rename = require("gulp-rename");
-var imageMin = require("gulp-imagemin");
-var watch = require("gulp-watch");
-var concat = require("gulp-concat");
+#improved code base on ES6
 
+import gulp from 'gulp';
+import { series, parallel, watch } from 'gulp';
+import uglify from 'gulp-uglify';
+import cleanCss from 'gulp-clean-css';
+import rename from 'gulp-rename';
+import imageMin from 'gulp-imagemin';
+import concat from 'gulp-concat';
 
-const {series, parallel} = require('gulp');
+const path = {
+    css: {
+        src: './wwwroot/css/*.css',
+        dest: './wwwroot/css',
+        minDest: './wwwroot/css/*.min.css'
+    },
+    js: {
+        mainSrc: './wwwroot/assets/js/*.js',
+        mainDest: './wwwroot/assets/js',
+        mainMinDest: './wwwroot/assets/js/*.min.js',
+        adminSrc: './wwwroot/assets/js/admin/*.js',
+        adminDest: './wwwroot/assets/js/admin',
+        adminMinDest: './wwwroot/assets/js/admin/*.min.js',
+        studentSrc: './wwwroot/assets/js/student/*.js',
+        studentDest: './wwwroot/assets/js/student',
+        studentMinDest: './wwwroot/assets/js/student/*.min.js',
+        sysadminSrc: './wwwroot/assets/js/sysadmin/*.js',
+        sysadminDest: './wwwroot/assets/js/sysadmin',
+        sysadminMinDest: './wwwroot/assets/js/sysadmin/*.min.js',
+        components: {
+            adminSrc: './wwwroot/assets/js/admin/*.js',
+            adminDest: './wwwroot/assets/js/admin',
+            adminMinDest: './wwwroot/assets/js/admin/*.min.js',
 
+            loginSrc: './wwwroot/assets/js/login/*.js',
+            loginDest: './wwwroot/assets/js/login',
+            loginMinDest: './wwwroot/assets/js/login/*.min.js',
 
+            registerSrc: './wwwroot/assets/js/register/*.js',
+            registerDest: './wwwroot/assets/js/register',
+            registerMinDest: './wwwroot/assets/js/register/*.min.js',
 
-var path = {
-    styles: {
-        scss: {
-            src: './wwwroot/assets/scss/*.scss',
-            dest: './wwwroot/assets/css',
-            minDest: './wwwroot/assets/css/*.min.css'
+            studentSrc: './wwwroot/assets/js/student/*.js',
+            studentDest: './wwwroot/assets/js/student',
+            studentMinDest: './wwwroot/assets/js/student/*.min.js'
         },
-        css: {
-            src: './wwwroot/assets/css/*.css',
-            dest: './wwwroot/assets/css',
-            minDest: './wwwroot/assets/css/*.min.css'
-        },
-        js: {
-            mainSrc: './wwwroot/assets/js/*.js',
-            mainDest: './wwwroot/assets/js',
-            mainMinDest: './wwwroot/assets/js/*.min.js',
-            modelSrc: './wwwroot/assets/js/model/*.js',
-            modelDest: './wwwroot/assets/js/model',
-            modelMinDest: './wwwroot/assets/js/model/*.min.js',
-            vmSrc: './wwwroot/assets/js/viewmodel/*.js',
-            vmDest: './wwwroot/assets/js/viewmodel',
-            vmMinDest: './wwwroot/assets/js/viewmodel/*.min.js'
-        },
-        img:{
-            src: './wwwroot/assets/img/*',
-            dest: './wwwroot/assets/img'
-        },
-        intl: {
-            src: './wwwroot/assets/css/libs/intlTelInput'
-        },
-        cdn:{
-            src: './wwwroot/assets/js/cdnscripts/*.js',
-            dest: './wwwroot/assets/js/cdnscripts'
-        },
-        cdncss:{
-
-            src: './wwwroot/assets/css/cdncss/*.css',
-            dest: './wwwroot/assets/css/cdncss'
-        }
+    },
+    img: {
+        src: './wwwroot/assets/img/*',
+        dest: './wwwroot/assets/img'
     }
 }
 
 
-function scssStyles(){
-    return gulp.src([path.styles.scss.src, '!' + path.styles.css.minDest])
-        .pipe(sass()).on('error', sass.logError)
-        .pipe(gulp.dest(path.styles.scss.dest));
-}
-
-function styles(){
-    return gulp.src([path.styles.css.src, '!' + path.styles.css.minDest])
+const minStyle = () => {
+    return gulp.src([path.css.src, '!' + path.css.minDest])
         .pipe(cleanCss())
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(gulp.dest(path.styles.css.dest));
+        .pipe(gulp.dest(path.css.dest));
 }
 
-function mainScripts(){
-    return gulp.src([path.styles.js.mainSrc, '!' + path.styles.js.mainMinDest])
+const mainScripts = () => {
+    return gulp.src([path.js.mainSrc, '!' + path.js.mainMinDest])
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(gulp.dest(path.styles.js.mainDest));
+        .pipe(gulp.dest(path.js.mainDest));
 }
 
-function modelScripts(){
-    return gulp.src([path.styles.js.modelSrc, '!' + path.styles.js.modelMinDest])
+const adminScripts = () => {
+    return gulp.src([path.js.adminSrc, '!' + path.js.adminMinDest])
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(gulp.dest(path.styles.js.modelDest));
+        .pipe(gulp.dest(path.js.adminDest));
 }
 
-function vmScripts(){
-    return gulp.src([path.styles.js.vmSrc, '!' + path.styles.js.vmMinDest])
+const studentScripts = () => {
+    return gulp.src([path.js.studentSrc, '!' + path.js.studentMinDest])
         .pipe(uglify())
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(gulp.dest(path.styles.js.vmDest));
+        .pipe(gulp.dest(path.js.studentDest));
 }
 
-function imageOptimization(){
-    return gulp.src(path.styles.img.src)
+const sysadminScripts = () => {
+    return gulp.src([path.js.sysadminSrc, '!' + path.js.sysadminMinDest])
+        .pipe(uglify())
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest(path.js.sysadminDest));
+}
+
+const componentAdminScript = () => {
+    return gulp.src([path.js.components.adminSrc, '!' + path.js.components.adminMinDest])
+        .pipe(uglify())
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest(path.js.components.adminDest));
+}
+
+
+const componentLoginScript = () => {
+    return gulp.src([path.js.components.loginSrc, '!' + path.js.components.loginMinDest])
+        .pipe(uglify())
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest(path.js.components.loginDest));
+}
+
+
+const componentRegisterScript = () => {
+    return gulp.src([path.js.components.registerSrc, '!' + path.js.components.registerMinDest])
+        .pipe(uglify())
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest(path.js.components.registerDest));
+}
+
+
+const componentStudentScript = () => {
+    return gulp.src([path.js.components.studentSrc, '!' + path.js.components.studentMinDest])
+        .pipe(uglify())
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest(path.js.components.studentDest));
+}
+
+const imgOpt = () => {
+    return gulp.src(path.img.src)
         .pipe(imageMin())
-        .pipe(gulp.dest(path.styles.img.dest));
+        .pipe(gulp.dest(path.img.dest));
 }
 
-function SassWatcher(){
-    return gulp.watch(path.styles.scss.src, series(scssStyles, styles));
-}
-
-function MainScriptWatcher(){
-    return gulp.watch(path.styles.js.mainSrc, series(mainScripts));
-}
-function ModelScriptWatcher() {
-    return gulp.watch(path.styles.js.modelSrc, series(modelScripts));
-}
-function VmScriptWatcher() {
-    return gulp.watch(path.styles.js.vmSrc, series(vmScripts));
-}
-
-function bundleCss(){
-    return gulp.src(path.styles.css.minDest)
-        .pipe(cleanCss())
-        .pipe(concat("bundle.min.css"))
-        .pipe(gulp.dest(path.styles.css.dest));
-}
-
-function bundleJs(){
-    var app = "./wwwroot/assets/js/app/app.js";
-    var model = "./wwwroot/assets/js/model/landing.index.model.min.js";
-    var vm = "./wwwroot/assets/js/viewmodel/landing.index.viewmodel.min.js";
-    var main = "./wwwroot/assets/js/main.min.js";
-    var utils = "./wwwroot/assets/js/utils.min.js";
-
-    return gulp.src([app,model,vm,main])
-        .pipe(uglify())
-        .pipe(concat("bundle.min.js"))
-        .pipe(gulp.dest(path.styles.js.mainDest));
-}
+const watchMainJs = () => watch(path.js.mainSrc, series(mainScripts));
+const watchAdminJs = () => watch(path.js.adminSrc, series(adminScripts));
+const watchStudenJs = () => watch(path.js.studentSrc, series(studentScripts));
+const watchSysAdminJs = () => watch(path.js.sysadminSrc, series(sysadminScripts));
+const watchComponentAdminJs = () => watch(path.js.components.adminSrc, series(componentAdminScript));
+const watchComponentLoginJs = () => watch(path.js.components.loginSrc, series(componentLoginScript));
+const watchComponentRegisterJs = () => watch(path.js.components.registerSrc, series(componentRegisterScript));
+const watchComponentStudentJs = () => watch(path.js.components.studentSrc, series(componentStudentScript));
 
 
-function bundleCDN() {
-    var bs = "./wwwroot/assets/css/cdncss/bootstrap.min.css";
-    var amiko = "./wwwroot/assets/css/cdncss/amiko.css";
-    var anaheim = "./wwwroot/assets/css/cdncss/anaheim.css";
-    var lato = "./wwwroot/assets/css/cdncss/lato.css";
-    var monserrat = "./wwwroot/assets/css/cdncss/monserrat.css";
-    var sourcesanspro = "./wwwroot/assets/css/cdncss/sourcesanspro.css";
-    var animate = "./wwwroot/assets/css/cdncss/animate.min.css";
-    var flipclock = "./wwwroot/assets/css/cdncss/flipclock.min.css";
-    var fontawesome = "./wwwroot/assets/css/cdncss/font-awesome.min.css";
 
-    return gulp.src([bs,amiko,anaheim,lato,monserrat,sourcesanspro,animate,flipclock])
-        .pipe(cleanCss())
-        .pipe(concat("cdnbundle.min.css"))
-        .pipe(gulp.dest(path.styles.cdncss.dest));
-}
+const build = series(scssStyles,
+    parallel(
+        minStyle,
+        mainScripts,
+        adminScripts,
+        studentScripts,
+        sysadminScripts,
+        componentAdminScript,
+        componentLoginScript,
+        componentRegisterScript,
+        componentStudentScript));
 
-var build = series(scssStyles, parallel(styles, mainScripts, modelScripts, vmScripts, bundleJs, bundleCss));
+const _watch = parallel(
+    watchMainJs,
+    watchAdminJs,
+    watchStudenJs,
+    watchSysAdminJs,
+    watchComponentAdminJs,
+    watchComponentLoginJs,
+    watchComponentRegisterJs,
+    watchComponentStudentJs
+);
 
-var bundler = series(bundleJs);
-
-gulp.task('bundle', bundler);
-
-gulp.task('build', build);
+gulp.task('watch', _watch);
 
 gulp.task('default', build);
-
-var watcher = parallel(SassWatcher, MainScriptWatcher, ModelScriptWatcher, VmScriptWatcher, bundleCss);
-
-gulp.task('watch', watcher);
-gulp.task('watch-sass', gulp.series(SassWatcher));
-gulp.task('watch-js', gulp.series(MainScriptWatcher));
-
